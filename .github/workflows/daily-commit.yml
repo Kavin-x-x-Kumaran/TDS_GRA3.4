@@ -1,0 +1,32 @@
+name: Automated Daily Commit
+
+on:
+  schedule:
+    # Runs at 08:30 UTC every day (no wildcards for hour and minute)
+    - cron: '30 8 * * *'
+  # Added workflow_dispatch so you can manually trigger it for testing right now!
+  workflow_dispatch:
+
+# Grant the workflow permission to push commits to the repository
+permissions:
+  contents: write
+
+jobs:
+  daily-update:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create or update daily activity log
+        run: |
+          echo "Automated run completed on $(date)" >> devsync_activity.log
+
+      - name: Commit changes by 24f2003806@ds.study.iitm.ac.in
+        run: |
+          git config --local user.email "24f2003806@ds.study.iitm.ac.in"
+          git config --local user.name "DevSync Automation Bot"
+          git add devsync_activity.log
+          git commit -m "Automated daily update"
+          git push
